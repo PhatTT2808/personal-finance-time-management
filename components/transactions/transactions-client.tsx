@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { TransactionDialog } from "@/components/transactions/transaction-dialog";
 import { TransactionFilters } from "@/components/transactions/transaction-filters";
 import { TransactionsTable } from "@/components/transactions/transactions-table";
+import { AiTransactionParser } from "@/components/transactions/ai-transaction-parser";
 
 type Props = {
   transactions: Transaction[];
@@ -75,6 +76,26 @@ export function TransactionsClient({
     });
   }
 
+  function upsertTransactions(transactionsToSave: Transaction[]) {
+    setMonthlyTransactions((current) => {
+      const savedIds = new Set(transactionsToSave.map((item) => item.id));
+      const withoutSaved = current.filter((item) => !savedIds.has(item.id));
+      return sortTransactions([
+        ...withoutSaved,
+        ...transactionsToSave.filter(isInCurrentMonth),
+      ]);
+    });
+
+    setVisibleTransactions((current) => {
+      const savedIds = new Set(transactionsToSave.map((item) => item.id));
+      const withoutSaved = current.filter((item) => !savedIds.has(item.id));
+      return sortTransactions([
+        ...withoutSaved,
+        ...transactionsToSave.filter(matchesCurrentFilter),
+      ]);
+    });
+  }
+
   function deleteTransaction(id: string) {
     setMonthlyTransactions((current) => current.filter((item) => item.id !== id));
     setVisibleTransactions((current) => current.filter((item) => item.id !== id));
@@ -118,6 +139,8 @@ export function TransactionsClient({
           valueClassName={totals.balance >= 0 ? "text-emerald-600" : "text-rose-600"}
         />
       </div>
+
+      <AiTransactionParser onSaved={upsertTransactions} />
 
       <div className="mb-4">
         <TransactionFilters year={year} month={month} type={type} />
