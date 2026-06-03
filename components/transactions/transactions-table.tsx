@@ -18,8 +18,12 @@ import { ConfirmDelete } from "@/components/confirm-delete";
 
 export function TransactionsTable({
   transactions,
+  onSaved,
+  onDeleted,
 }: {
   transactions: Transaction[];
+  onSaved?: (transaction: Transaction) => void;
+  onDeleted?: (id: string) => void;
 }) {
   if (transactions.length === 0) {
     return (
@@ -76,6 +80,7 @@ export function TransactionsTable({
                 <div className="flex justify-end gap-1">
                   <TransactionDialog
                     transaction={t}
+                    onSaved={onSaved}
                     trigger={
                       <Button variant="ghost" size="icon" aria-label="Sửa">
                         <Pencil className="h-4 w-4" />
@@ -85,6 +90,7 @@ export function TransactionsTable({
                   <ConfirmDelete
                     table="transactions"
                     id={t.id}
+                    onDeleted={() => onDeleted?.(t.id)}
                     description="Bạn có chắc chắn muốn xóa giao dịch này không?"
                     trigger={
                       <Button

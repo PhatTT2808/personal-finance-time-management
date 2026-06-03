@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { getCategories } from "@/lib/constants";
@@ -32,10 +31,13 @@ type Props = {
   // When provided, the dialog edits this transaction; otherwise it creates a new one.
   transaction?: Transaction;
   trigger: React.ReactElement;
+  onSaved?: (transaction: Transaction) => void;
 };
 
-export function TransactionDialog({ transaction, trigger }: Props) {
-  const router = useRouter();
+const TRANSACTION_COLUMNS =
+  "id, user_id, type, amount, category, note, transaction_date, created_at, updated_at";
+
+export function TransactionDialog({ transaction, trigger, onSaved }: Props) {
   const isEdit = Boolean(transaction);
 
   const [open, setOpen] = useState(false);
@@ -78,19 +80,28 @@ export function TransactionDialog({ transaction, trigger }: Props) {
       transaction_date: date,
     };
 
+    let savedTransaction: Transaction | null = null;
     let error;
     if (isEdit && transaction) {
-      ({ error } = await supabase
+      const result = await supabase
         .from("transactions")
         .update(payload)
-        .eq("id", transaction.id));
+        .eq("id", transaction.id)
+        .select(TRANSACTION_COLUMNS)
+        .single();
+      error = result.error;
+      savedTransaction = result.data as Transaction | null;
     } else {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      ({ error } = await supabase
+      const result = await supabase
         .from("transactions")
-        .insert({ ...payload, user_id: user?.id }));
+        .insert({ ...payload, user_id: user?.id })
+        .select(TRANSACTION_COLUMNS)
+        .single();
+      error = result.error;
+      savedTransaction = result.data as Transaction | null;
     }
 
     setLoading(false);
@@ -101,8 +112,10 @@ export function TransactionDialog({ transaction, trigger }: Props) {
     }
 
     toast.success(isEdit ? "Đã cập nhật giao dịch." : "Đã thêm giao dịch.");
+    if (savedTransaction) {
+      onSaved?.(savedTransaction);
+    }
     setOpen(false);
-    router.refresh();
   }
 
   // When switching type, reset category since the list differs.

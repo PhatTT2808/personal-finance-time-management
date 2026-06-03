@@ -21,9 +21,10 @@ type Props = {
   id: string;
   trigger: React.ReactElement;
   description?: string;
+  onDeleted?: () => void;
 };
 
-export function ConfirmDelete({ table, id, trigger, description }: Props) {
+export function ConfirmDelete({ table, id, trigger, description, onDeleted }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -40,8 +41,11 @@ export function ConfirmDelete({ table, id, trigger, description }: Props) {
     }
 
     toast.success("Đã xóa.");
+    onDeleted?.();
     setOpen(false);
-    router.refresh();
+    if (!onDeleted) {
+      router.refresh();
+    }
   }
 
   return (
