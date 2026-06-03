@@ -26,20 +26,20 @@ export function TimeBlockItem({ block, onSaved, onDeleted }: Props) {
       : TIME_BLOCK_TYPE_LABELS[block.type];
 
   return (
-    <div className="flex items-start gap-3 rounded-lg border bg-card p-3">
+    <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-black/20 p-3 shadow-lg shadow-black/10 transition hover:border-sky-300/20 hover:bg-white/[0.055]">
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="font-medium">{block.title}</p>
-          <Badge variant="secondary">
+          <p className="font-semibold text-slate-100">{block.title}</p>
+          <Badge variant="secondary" className="border border-sky-300/20 bg-sky-400/10 text-sky-300">
             {typeLabel}
           </Badge>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-slate-400">
           {formatTime(block.start_time)} - {formatTime(block.end_time)} (
           {formatHours(hours)} giờ)
         </p>
         {block.note && (
-          <p className="truncate text-sm text-muted-foreground">{block.note}</p>
+          <p className="truncate text-sm text-slate-500">{block.note}</p>
         )}
       </div>
 
@@ -48,7 +48,7 @@ export function TimeBlockItem({ block, onSaved, onDeleted }: Props) {
           timeBlock={block}
           onSaved={onSaved}
           trigger={
-            <Button variant="ghost" size="icon" aria-label="Sửa">
+            <Button variant="ghost" size="icon" aria-label="Sửa" className="text-slate-400 hover:bg-white/10 hover:text-sky-200">
               <Pencil className="h-4 w-4" />
             </Button>
           }
@@ -63,7 +63,7 @@ export function TimeBlockItem({ block, onSaved, onDeleted }: Props) {
               variant="ghost"
               size="icon"
               aria-label="Xóa"
-              className="text-rose-600"
+              className="text-red-300 hover:bg-red-400/10 hover:text-red-200"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

@@ -11,8 +11,8 @@ export function TimeBlockDatePicker({
   onChange?: (date: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <Label htmlFor="filter-date" className="text-sm text-muted-foreground">
+    <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.045] p-3 shadow-2xl shadow-black/10 sm:w-fit">
+      <Label htmlFor="filter-date" className="text-sm font-semibold text-slate-400">
         Ngày
       </Label>
       <Input

@@ -116,7 +116,7 @@ export function TodoDialog({ todo, trigger, onSaved }: Props) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Tiêu đề</Label>
+            <Label htmlFor="title" className="text-slate-300">Tiêu đề</Label>
             <Input
               id="title"
               value={title}
@@ -126,7 +126,7 @@ export function TodoDialog({ todo, trigger, onSaved }: Props) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Mô tả</Label>
+            <Label htmlFor="description" className="text-slate-300">Mô tả</Label>
             <Textarea
               id="description"
               placeholder="Tùy chọn"
@@ -136,7 +136,7 @@ export function TodoDialog({ todo, trigger, onSaved }: Props) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="due-date">Hạn chót</Label>
+            <Label htmlFor="due-date" className="text-slate-300">Hạn chót</Label>
             <Input
               id="due-date"
               type="date"
@@ -146,7 +146,7 @@ export function TodoDialog({ todo, trigger, onSaved }: Props) {
           </div>
 
           <div className="space-y-2">
-            <Label>Độ ưu tiên</Label>
+            <Label className="text-slate-300">Độ ưu tiên</Label>
             <Select
               value={priority}
               onValueChange={(v) =>

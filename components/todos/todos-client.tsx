@@ -43,7 +43,7 @@ function Section({
 
   return (
     <div className="space-y-2">
-      <h2 className="text-sm font-semibold text-muted-foreground">
+      <h2 className="text-sm font-bold uppercase tracking-[0.14em] text-slate-400">
         {title} ({todos.length})
       </h2>
       <div className="space-y-2">
@@ -105,7 +105,7 @@ export function TodosClient({ initialTodos, today }: Props) {
       />
 
       {todos.length === 0 ? (
-        <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.045] p-8 text-center text-sm text-slate-400 shadow-2xl shadow-black/20">
           Chưa có công việc nào. Hãy thêm công việc đầu tiên.
         </div>
       ) : (

@@ -143,7 +143,7 @@ export function TimeBlockDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Tiêu đề</Label>
+              <Label htmlFor="title" className="text-slate-300">Tiêu đề</Label>
             <Input
               id="title"
               value={title}
@@ -153,7 +153,7 @@ export function TimeBlockDialog({
           </div>
 
           <div className="space-y-2">
-            <Label>Loại</Label>
+              <Label className="text-slate-300">Loại</Label>
             <Select
               value={type}
               onValueChange={(v) => setType((v as TimeBlockType) ?? "study")}
@@ -173,7 +173,7 @@ export function TimeBlockDialog({
 
           {type === "other" && (
             <div className="space-y-2">
-              <Label htmlFor="custom-type">Tên loại khác</Label>
+              <Label htmlFor="custom-type" className="text-slate-300">Tên loại khác</Label>
               <Input
                 id="custom-type"
                 placeholder="Ví dụ: Đọc sách, Đi chợ, Làm project..."
@@ -185,7 +185,7 @@ export function TimeBlockDialog({
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="block-date">Ngày</Label>
+            <Label htmlFor="block-date" className="text-slate-300">Ngày</Label>
             <Input
               id="block-date"
               type="date"
@@ -197,7 +197,7 @@ export function TimeBlockDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="start-time">Giờ bắt đầu</Label>
+              <Label htmlFor="start-time" className="text-slate-300">Giờ bắt đầu</Label>
               <Input
                 id="start-time"
                 type="time"
@@ -207,7 +207,7 @@ export function TimeBlockDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="end-time">Giờ kết thúc</Label>
+              <Label htmlFor="end-time" className="text-slate-300">Giờ kết thúc</Label>
               <Input
                 id="end-time"
                 type="time"
@@ -219,7 +219,7 @@ export function TimeBlockDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="note">Ghi chú</Label>
+            <Label htmlFor="note" className="text-slate-300">Ghi chú</Label>
             <Textarea
               id="note"
               placeholder="Tùy chọn"

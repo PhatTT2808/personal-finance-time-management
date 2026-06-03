@@ -33,6 +33,12 @@ type Props = {
 export function TransactionFilters({ year, month, type }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const triggerClassName =
+    "border-white/10 bg-slate-950/45 text-slate-200 shadow-lg shadow-black/10 ring-1 ring-white/5 backdrop-blur hover:border-sky-300/25 hover:bg-white/[0.04] focus-visible:border-sky-300/40 focus-visible:ring-sky-300/20";
+  const contentClassName =
+    "border border-white/10 bg-slate-950/95 text-slate-200 shadow-2xl shadow-black/40 ring-1 ring-white/10 backdrop-blur";
+  const itemClassName =
+    "text-slate-300 focus:bg-sky-400/10 focus:text-sky-100 data-highlighted:bg-sky-400/10 data-highlighted:text-sky-100";
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -51,12 +57,12 @@ export function TransactionFilters({ year, month, type }: Props) {
         value={String(month)}
         onValueChange={(v) => updateParam("month", v as string)}
       >
-        <SelectTrigger className="w-32">
+        <SelectTrigger className={`w-32 ${triggerClassName}`}>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className={contentClassName}>
           {MONTHS.map((label, i) => (
-            <SelectItem key={i} value={String(i + 1)}>
+            <SelectItem key={i} value={String(i + 1)} className={itemClassName}>
               {label}
             </SelectItem>
           ))}
@@ -67,14 +73,14 @@ export function TransactionFilters({ year, month, type }: Props) {
         value={String(year)}
         onValueChange={(v) => updateParam("year", v as string)}
       >
-        <SelectTrigger className="w-28">
+        <SelectTrigger className={`w-28 ${triggerClassName}`}>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className={contentClassName}>
           {years
             .sort((a, b) => b - a)
             .map((y) => (
-              <SelectItem key={y} value={String(y)}>
+              <SelectItem key={y} value={String(y)} className={itemClassName}>
                 {y}
               </SelectItem>
             ))}
@@ -85,13 +91,13 @@ export function TransactionFilters({ year, month, type }: Props) {
         value={type}
         onValueChange={(v) => updateParam("type", v as string)}
       >
-        <SelectTrigger className="w-36">
+        <SelectTrigger className={`w-36 ${triggerClassName}`}>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Tất cả</SelectItem>
-          <SelectItem value="income">Thu nhập</SelectItem>
-          <SelectItem value="expense">Chi tiêu</SelectItem>
+        <SelectContent className={contentClassName}>
+          <SelectItem value="all" className={itemClassName}>Tất cả</SelectItem>
+          <SelectItem value="income" className={itemClassName}>Thu nhập</SelectItem>
+          <SelectItem value="expense" className={itemClassName}>Chi tiêu</SelectItem>
         </SelectContent>
       </Select>
     </div>

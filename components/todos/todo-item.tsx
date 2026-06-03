@@ -14,9 +14,9 @@ import { ConfirmDelete } from "@/components/confirm-delete";
 import { cn } from "@/lib/utils";
 
 const PRIORITY_STYLES: Record<Todo["priority"], string> = {
-  low: "bg-slate-100 text-slate-700",
-  medium: "bg-amber-100 text-amber-700",
-  high: "bg-rose-100 text-rose-700",
+  low: "border-slate-300/15 bg-slate-400/10 text-slate-300",
+  medium: "border-amber-300/20 bg-amber-400/10 text-amber-300",
+  high: "border-red-300/20 bg-red-400/10 text-red-300",
 };
 
 type Props = {
@@ -60,11 +60,11 @@ export function TodoItem({
   }
 
   return (
-    <div className="flex items-start gap-3 rounded-lg border bg-card p-3">
+    <div className={cn("flex items-start gap-3 rounded-xl border border-white/10 bg-black/20 p-3 shadow-lg shadow-black/10 transition hover:border-sky-300/20 hover:bg-white/[0.055]", done && "opacity-75")}>
       <Button
         variant="ghost"
         size="icon"
-        className={cn("mt-0.5 shrink-0", done && "text-emerald-600")}
+        className={cn("mt-0.5 shrink-0 text-slate-400 hover:bg-white/10 hover:text-sky-200", done && "text-emerald-300 hover:text-emerald-200")}
         onClick={toggleStatus}
         disabled={loading}
         aria-label={done ? "Đánh dấu chưa xong" : "Đánh dấu hoàn thành"}
@@ -79,26 +79,26 @@ export function TodoItem({
       <div className="min-w-0 flex-1">
         <p
           className={cn(
-            "font-medium",
-            done && "text-muted-foreground line-through"
+            "font-semibold text-slate-100",
+            done && "text-slate-500 line-through"
           )}
         >
           {todo.title}
         </p>
         {todo.description && (
-          <p className="truncate text-sm text-muted-foreground">
+          <p className="truncate text-sm text-slate-500">
             {todo.description}
           </p>
         )}
         <div className="mt-1 flex flex-wrap items-center gap-2">
-          <Badge variant="secondary" className={PRIORITY_STYLES[todo.priority]}>
+          <Badge variant="secondary" className={cn("border", PRIORITY_STYLES[todo.priority])}>
             {TODO_PRIORITY_LABELS[todo.priority]}
           </Badge>
           {todo.due_date && (
             <span
               className={cn(
-                "text-xs text-muted-foreground",
-                overdue && !done && "font-medium text-rose-600"
+                "text-xs text-slate-400",
+                overdue && !done && "font-semibold text-red-300"
               )}
             >
               Hạn: {formatDate(todo.due_date)}
@@ -112,7 +112,7 @@ export function TodoItem({
           todo={todo}
           onSaved={onSaved}
           trigger={
-            <Button variant="ghost" size="icon" aria-label="Sửa">
+            <Button variant="ghost" size="icon" aria-label="Sửa" className="text-slate-400 hover:bg-white/10 hover:text-sky-200">
               <Pencil className="h-4 w-4" />
             </Button>
           }
@@ -127,7 +127,7 @@ export function TodoItem({
               variant="ghost"
               size="icon"
               aria-label="Xóa"
-              className="text-rose-600"
+              className="text-red-300 hover:bg-red-400/10 hover:text-red-200"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

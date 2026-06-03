@@ -141,11 +141,13 @@ export function TimeBlocksClient({ initialBlocks, selectedDate }: Props) {
           label="Tổng giờ trong ngày"
           value={`${formatHours(dayTotal)} giờ`}
           icon={<Clock className="h-5 w-5" />}
+          valueClassName="text-sky-300"
         />
         <StatCard
           label="Tổng giờ trong tuần"
           value={`${formatHours(weekTotal)} giờ`}
           icon={<CalendarDays className="h-5 w-5" />}
+          valueClassName="text-sky-300"
         />
       </div>
 
@@ -153,25 +155,25 @@ export function TimeBlocksClient({ initialBlocks, selectedDate }: Props) {
         <TimeBlockDatePicker date={currentDate} onChange={selectDate} />
       </div>
 
-      <Card className="mb-6">
-        <CardHeader className="gap-3 sm:flex sm:flex-row sm:items-center sm:justify-between">
+      <Card className="relative mb-6 overflow-hidden border-white/10 bg-white/[0.045] shadow-2xl shadow-black/20 before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-sky-300/45 before:to-transparent">
+        <CardHeader className="gap-3 border-b border-white/10 sm:flex sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <CardTitle>Lịch tháng</CardTitle>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <CardTitle className="text-base font-bold text-white">Lịch tháng</CardTitle>
+            <p className="mt-1 text-sm text-slate-400">
               Tháng {visibleMonth.getMonth() + 1}, {visibleMonth.getFullYear()}
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => changeMonth(-1)}>
+            <Button variant="outline" size="sm" className="border-white/10 bg-black/20 text-slate-200 hover:border-sky-300/30 hover:bg-sky-400/10 hover:text-sky-100" onClick={() => changeMonth(-1)}>
               Tháng trước
             </Button>
-            <Button variant="outline" size="sm" onClick={() => changeMonth(1)}>
+            <Button variant="outline" size="sm" className="border-white/10 bg-black/20 text-slate-200 hover:border-sky-300/30 hover:bg-sky-400/10 hover:text-sky-100" onClick={() => changeMonth(1)}>
               Tháng sau
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-muted-foreground">
+          <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
             {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map((day) => (
               <div key={day} className="py-2">
                 {day}
@@ -192,11 +194,11 @@ export function TimeBlocksClient({ initialBlocks, selectedDate }: Props) {
                   type="button"
                   onClick={() => selectDate(dateISO)}
                   className={cn(
-                    "relative min-h-12 rounded-lg border p-2 text-sm transition hover:bg-muted",
-                    !isCurrentMonth && "text-muted-foreground/45",
-                    isToday && "border-primary/50",
-                    hasBlocks && "bg-rose-50",
-                    isSelected && "border-primary bg-primary text-primary-foreground hover:bg-primary",
+                    "relative min-h-12 rounded-xl border border-white/10 bg-black/20 p-2 text-sm font-semibold text-slate-200 transition hover:border-sky-300/30 hover:bg-sky-400/10 hover:text-sky-100",
+                    !isCurrentMonth && "bg-black/10 text-slate-600 hover:text-slate-400",
+                    isToday && "border-sky-300/40 shadow-[0_0_18px_rgba(56,189,248,0.12)]",
+                    hasBlocks && "border-red-300/20 bg-red-400/10",
+                    isSelected && "border-sky-300/70 bg-sky-400/20 text-white shadow-[0_0_28px_rgba(56,189,248,0.22)] hover:bg-sky-400/25",
                   )}
                   aria-label={`Chọn ngày ${formatDate(dateISO)}`}
                 >
@@ -204,8 +206,8 @@ export function TimeBlocksClient({ initialBlocks, selectedDate }: Props) {
                   {hasBlocks && (
                     <span
                       className={cn(
-                        "absolute bottom-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-rose-500",
-                        isSelected && "bg-primary-foreground"
+                        "absolute bottom-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-red-300 shadow-[0_0_10px_rgba(248,113,113,0.65)]",
+                        isSelected && "bg-white shadow-[0_0_10px_rgba(255,255,255,0.75)]"
                       )}
                     />
                   )}
@@ -216,12 +218,12 @@ export function TimeBlocksClient({ initialBlocks, selectedDate }: Props) {
         </CardContent>
       </Card>
 
-      <p className="mb-2 text-sm font-semibold text-muted-foreground">
+      <p className="mb-2 text-sm font-semibold text-slate-400">
         Lịch ngày {formatDate(currentDate)}
       </p>
 
       {dayBlocks.length === 0 ? (
-        <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.045] p-8 text-center text-sm text-slate-400 shadow-2xl shadow-black/20">
           Chưa có khối thời gian nào trong ngày này.
         </div>
       ) : (

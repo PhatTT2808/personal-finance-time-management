@@ -27,19 +27,19 @@ export default async function SettingsPage() {
         description="Thông tin tài khoản của bạn."
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Tài khoản</CardTitle>
-          <CardDescription>Thông tin đăng nhập hiện tại.</CardDescription>
+      <Card className="relative overflow-hidden border-white/10 bg-white/[0.045] shadow-2xl shadow-black/20 before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-sky-300/45 before:to-transparent">
+        <CardHeader className="border-b border-white/10">
+          <CardTitle className="text-base font-bold text-white">Tài khoản</CardTitle>
+          <CardDescription className="text-slate-400">Thông tin đăng nhập hiện tại.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between border-b pb-3">
-            <span className="text-sm text-muted-foreground">Email</span>
-            <span className="text-sm font-medium">{user?.email}</span>
+          <div className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-black/20 p-3">
+            <span className="shrink-0 text-sm font-semibold text-slate-400">Email</span>
+            <span className="min-w-0 truncate text-right text-sm font-semibold text-slate-100">{user?.email}</span>
           </div>
-          <div className="flex items-center justify-between border-b pb-3">
-            <span className="text-sm text-muted-foreground">Ngày tạo</span>
-            <span className="text-sm font-medium">{createdAt}</span>
+          <div className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-black/20 p-3">
+            <span className="shrink-0 text-sm font-semibold text-slate-400">Ngày tạo</span>
+            <span className="text-right text-sm font-semibold text-slate-100">{createdAt}</span>
           </div>
           <div className="pt-2">
             <LogoutButton />

@@ -148,29 +148,29 @@ export default async function DashboardPage() {
   const pendingTodoCount = todayTodos.length + overdueTodos.length;
 
   return (
-    <div>
+    <div className="space-y-8">
       <PageHeader
         title="Bảng điều khiển"
         description="Tổng quan nhanh về tiền bạc, lịch hôm nay và việc cần làm."
       />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:gap-5">
         <StatCard
           label="Tổng thu tháng này"
           value={formatCurrency(totalIncome)}
           icon={<TrendingUp className="h-5 w-5" />}
-          valueClassName="text-emerald-600"
+          valueClassName="text-sky-300"
         />
         <StatCard
           label="Tổng chi tháng này"
           value={formatCurrency(totalExpense)}
           icon={<TrendingDown className="h-5 w-5" />}
-          valueClassName="text-rose-600"
+          valueClassName="text-red-300"
         />
         <StatCard
           label="Số dư tháng này"
           value={formatCurrency(balance)}
           icon={<Wallet className="h-5 w-5" />}
-          valueClassName={balance >= 0 ? "text-emerald-600" : "text-rose-600"}
+          valueClassName={balance >= 0 ? "text-sky-300" : "text-red-300"}
         />
         <StatCard
           label="Giờ học/làm/gym hôm nay"
@@ -186,10 +186,10 @@ export default async function DashboardPage() {
           label="Todo quá hạn"
           value={String(overdueTodos.length)}
           icon={<AlertCircle className="h-5 w-5" />}
-          valueClassName={overdueTodos.length > 0 ? "text-rose-600" : undefined}
+          valueClassName={overdueTodos.length > 0 ? "text-red-300" : undefined}
         />
       </div>
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         <TodaySchedule blocks={todayBlocks} />
         <TodayTodos todayTodos={todayTodos} overdueTodos={overdueTodos} />
         <RecentTransactions transactions={recentTx} />
@@ -201,10 +201,10 @@ export default async function DashboardPage() {
 
 function TodaySchedule({ blocks }: { blocks: TodayTimeBlock[] }) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Lịch hôm nay</CardTitle>
-        <Link href="/time-blocks" className="text-sm text-primary underline">
+    <Card className="border-white/10 bg-white/[0.045] shadow-2xl shadow-black/20">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-white/10 pb-4">
+        <CardTitle className="text-base font-bold text-white">Lịch hôm nay</CardTitle>
+        <Link href="/time-blocks" className="rounded-full border border-sky-300/20 bg-sky-400/10 px-3 py-1 text-xs font-semibold text-sky-300 transition hover:bg-sky-400/15">
           Xem tất cả
         </Link>
       </CardHeader>
@@ -224,20 +224,20 @@ function TodaySchedule({ blocks }: { blocks: TodayTimeBlock[] }) {
               return (
                 <div
                   key={b.id}
-                  className="flex items-start justify-between gap-3 text-sm"
+                  className="flex items-start justify-between gap-3 rounded-xl border border-white/10 bg-black/20 p-3 text-sm"
                 >
                   <div className="min-w-0">
-                    <p className="truncate font-medium">{b.title}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="truncate font-semibold text-slate-100">{b.title}</p>
+                    <p className="mt-1 text-xs text-slate-400">
                       {formatTime(b.start_time)} - {formatTime(b.end_time)}
                     </p>
                     {b.note && (
-                      <p className="truncate text-xs text-muted-foreground">
+                      <p className="truncate text-xs text-slate-500">
                         {b.note}
                       </p>
                     )}
                   </div>
-                  <Badge variant="secondary" className="shrink-0">
+                  <Badge variant="secondary" className="shrink-0 border border-sky-300/20 bg-sky-400/10 text-sky-300">
                     {typeLabel}
                   </Badge>
                 </div>
@@ -259,10 +259,10 @@ function TodayTodos({
 }) {
   const total = todayTodos.length + overdueTodos.length;
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Việc cần làm hôm nay</CardTitle>
-        <Link href="/todos" className="text-sm text-primary underline">
+    <Card className="border-white/10 bg-white/[0.045] shadow-2xl shadow-black/20">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-white/10 pb-4">
+        <CardTitle className="text-base font-bold text-white">Việc cần làm hôm nay</CardTitle>
+        <Link href="/todos" className="rounded-full border border-sky-300/20 bg-sky-400/10 px-3 py-1 text-xs font-semibold text-sky-300 transition hover:bg-sky-400/15">
           Xem tất cả
         </Link>
       </CardHeader>
@@ -297,28 +297,28 @@ function TodoList({
 }) {
   return (
     <div>
-      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
         {title}
       </p>
       <div className="space-y-2">
         {todos.map((todo) => (
           <div
             key={todo.id}
-            className="flex items-center justify-between gap-3 rounded-lg border p-3 text-sm"
+            className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 p-3 text-sm"
           >
             <div className="min-w-0">
-              <p className="truncate font-medium">{todo.title}</p>
+              <p className="truncate font-semibold text-slate-100">{todo.title}</p>
               <p
                 className={
                   isOverdue
-                    ? "text-xs text-rose-600"
-                    : "text-xs text-muted-foreground"
+                    ? "text-xs text-red-300"
+                    : "text-xs text-slate-400"
                 }
               >
                 {todo.due_date ? formatDate(todo.due_date) : "Không có hạn"}
               </p>
             </div>
-            <Badge variant={isOverdue ? "destructive" : "secondary"}>
+            <Badge variant={isOverdue ? "destructive" : "secondary"} className={isOverdue ? "border border-red-300/20 bg-red-400/10 text-red-300" : "border border-sky-300/20 bg-sky-400/10 text-sky-300"}>
               {TODO_PRIORITY_LABELS[todo.priority]}
             </Badge>
           </div>
@@ -334,10 +334,10 @@ function RecentTransactions({
   transactions: RecentTransaction[];
 }) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base">Giao dịch gần đây</CardTitle>
-        <Link href="/transactions" className="text-sm text-primary underline">
+    <Card className="border-white/10 bg-white/[0.045] shadow-2xl shadow-black/20">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-white/10 pb-4">
+        <CardTitle className="text-base font-bold text-white">Giao dịch gần đây</CardTitle>
+        <Link href="/transactions" className="rounded-full border border-sky-300/20 bg-sky-400/10 px-3 py-1 text-xs font-semibold text-sky-300 transition hover:bg-sky-400/15">
           Xem tất cả
         </Link>
       </CardHeader>
@@ -351,21 +351,21 @@ function RecentTransactions({
             {transactions.map((t) => (
               <div
                 key={t.id}
-                className="flex items-center justify-between gap-3 text-sm"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 p-3 text-sm"
               >
                 <div className="min-w-0">
-                  <p className="truncate font-medium">
+                    <p className="truncate font-semibold text-slate-100">
                     {TRANSACTION_TYPE_LABELS[t.type]} - {t.category}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-slate-400">
                     {formatDate(t.transaction_date)}
                   </p>
                 </div>
                 <span
                   className={
                     t.type === "income"
-                      ? "shrink-0 font-medium text-emerald-600"
-                      : "shrink-0 font-medium text-rose-600"
+                      ? "shrink-0 font-bold text-sky-300"
+                      : "shrink-0 font-bold text-red-300"
                   }
                 >
                   {t.type === "income" ? "+" : "-"}
@@ -386,18 +386,18 @@ function WeekTimeSummary({
   typeHours: Map<TimeBlockType, number>;
 }) {
   return (
-    <Card>
+    <Card className="border-white/10 bg-white/[0.045] shadow-2xl shadow-black/20">
       <CardHeader>
-        <CardTitle className="text-base">Tổng giờ tuần này</CardTitle>
+        <CardTitle className="text-base font-bold text-white">Tổng giờ tuần này</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-3 sm:grid-cols-2">
           {TIME_BLOCK_TYPES.map((type) => (
-            <div key={type} className="rounded-lg border bg-card p-3 text-sm">
-              <p className="text-muted-foreground">
+              <div key={type} className="rounded-xl border border-white/10 bg-black/20 p-3 text-sm">
+              <p className="text-slate-400">
                 {TIME_BLOCK_TYPE_LABELS[type]}
               </p>
-              <p className="mt-1 text-lg font-semibold">
+              <p className="mt-1 text-lg font-black text-white">
                 {formatHours(typeHours.get(type) ?? 0)} giờ
               </p>
             </div>
