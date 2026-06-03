@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { TIME_BLOCK_TYPES, TIME_BLOCK_TYPE_LABELS } from "@/lib/constants";
@@ -31,16 +30,26 @@ import {
 type Props = {
   timeBlock?: TimeBlock;
   trigger: React.ReactElement;
+  onSaved?: (timeBlock: TimeBlock) => void;
+  initialDate?: string;
 };
 
-export function TimeBlockDialog({ timeBlock, trigger }: Props) {
-  const router = useRouter();
+const TIME_BLOCK_COLUMNS =
+  "id, user_id, title, type, custom_type, start_time, end_time, block_date, note, created_at, updated_at";
+
+export function TimeBlockDialog({
+  timeBlock,
+  trigger,
+  onSaved,
+  initialDate,
+}: Props) {
   const isEdit = Boolean(timeBlock);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(timeBlock?.title ?? "");
   const [type, setType] = useState<TimeBlockType>(timeBlock?.type ?? "study");
+  const [customType, setCustomType] = useState(timeBlock?.custom_type ?? "");
   const [startTime, setStartTime] = useState(
     timeBlock?.start_time?.slice(0, 5) ?? "08:00"
   );
@@ -48,7 +57,7 @@ export function TimeBlockDialog({ timeBlock, trigger }: Props) {
     timeBlock?.end_time?.slice(0, 5) ?? "09:00"
   );
   const [blockDate, setBlockDate] = useState(
-    timeBlock?.block_date ?? todayISO()
+    timeBlock?.block_date ?? initialDate ?? todayISO()
   );
   const [note, setNote] = useState(timeBlock?.note ?? "");
 
@@ -63,6 +72,10 @@ export function TimeBlockDialog({ timeBlock, trigger }: Props) {
       toast.error("Giờ kết thúc phải sau giờ bắt đầu.");
       return;
     }
+    if (type === "other" && !customType.trim()) {
+      toast.error("Vui lòng nhập tên loại khác.");
+      return;
+    }
 
     setLoading(true);
     const supabase = createClient();
@@ -70,25 +83,35 @@ export function TimeBlockDialog({ timeBlock, trigger }: Props) {
     const payload = {
       title: title.trim(),
       type,
+      custom_type: type === "other" ? customType.trim() : null,
       start_time: startTime,
       end_time: endTime,
       block_date: blockDate,
       note: note.trim() || null,
     };
 
+    let savedBlock: TimeBlock | null = null;
     let error;
     if (isEdit && timeBlock) {
-      ({ error } = await supabase
+      const result = await supabase
         .from("time_blocks")
         .update(payload)
-        .eq("id", timeBlock.id));
+        .eq("id", timeBlock.id)
+        .select(TIME_BLOCK_COLUMNS)
+        .single();
+      error = result.error;
+      savedBlock = result.data as TimeBlock | null;
     } else {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      ({ error } = await supabase
+      const result = await supabase
         .from("time_blocks")
-        .insert({ ...payload, user_id: user?.id }));
+        .insert({ ...payload, user_id: user?.id })
+        .select(TIME_BLOCK_COLUMNS)
+        .single();
+      error = result.error;
+      savedBlock = result.data as TimeBlock | null;
     }
 
     setLoading(false);
@@ -99,8 +122,10 @@ export function TimeBlockDialog({ timeBlock, trigger }: Props) {
     }
 
     toast.success(isEdit ? "Đã cập nhật khối thời gian." : "Đã thêm khối thời gian.");
+    if (savedBlock) {
+      onSaved?.(savedBlock);
+    }
     setOpen(false);
-    router.refresh();
   }
 
   return (
@@ -145,6 +170,19 @@ export function TimeBlockDialog({ timeBlock, trigger }: Props) {
               </SelectContent>
             </Select>
           </div>
+
+          {type === "other" && (
+            <div className="space-y-2">
+              <Label htmlFor="custom-type">Tên loại khác</Label>
+              <Input
+                id="custom-type"
+                placeholder="Ví dụ: Đọc sách, Đi chợ, Làm project..."
+                value={customType}
+                onChange={(e) => setCustomType(e.target.value)}
+                required
+              />
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="block-date">Ngày</Label>

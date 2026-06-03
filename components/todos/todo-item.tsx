@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Check, Circle, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -20,25 +19,44 @@ const PRIORITY_STYLES: Record<Todo["priority"], string> = {
   high: "bg-rose-100 text-rose-700",
 };
 
-export function TodoItem({ todo, overdue }: { todo: Todo; overdue?: boolean }) {
-  const router = useRouter();
+type Props = {
+  todo: Todo;
+  overdue?: boolean;
+  onSaved?: (todo: Todo) => void;
+  onDeleted?: (id: string) => void;
+  onStatusChanged?: (todo: Todo) => void;
+};
+
+export function TodoItem({
+  todo,
+  overdue,
+  onSaved,
+  onDeleted,
+  onStatusChanged,
+}: Props) {
   const [loading, setLoading] = useState(false);
   const done = todo.status === "done";
 
   async function toggleStatus() {
+    const nextTodo: Todo = {
+      ...todo,
+      status: done ? "pending" : "done",
+    };
+
+    onStatusChanged?.(nextTodo);
     setLoading(true);
     const supabase = createClient();
     const { error } = await supabase
       .from("todos")
-      .update({ status: done ? "pending" : "done" })
+      .update({ status: nextTodo.status })
       .eq("id", todo.id);
     setLoading(false);
 
     if (error) {
+      onStatusChanged?.(todo);
       toast.error("Không thể cập nhật trạng thái.");
       return;
     }
-    router.refresh();
   }
 
   return (
@@ -92,6 +110,7 @@ export function TodoItem({ todo, overdue }: { todo: Todo; overdue?: boolean }) {
       <div className="flex shrink-0 gap-1">
         <TodoDialog
           todo={todo}
+          onSaved={onSaved}
           trigger={
             <Button variant="ghost" size="icon" aria-label="Sửa">
               <Pencil className="h-4 w-4" />
@@ -101,6 +120,7 @@ export function TodoItem({ todo, overdue }: { todo: Todo; overdue?: boolean }) {
         <ConfirmDelete
           table="todos"
           id={todo.id}
+          onDeleted={() => onDeleted?.(todo.id)}
           description="Bạn có chắc chắn muốn xóa công việc này không?"
           trigger={
             <Button

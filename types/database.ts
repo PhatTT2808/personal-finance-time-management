@@ -39,6 +39,7 @@ export interface TimeBlock {
   user_id: string;
   title: string;
   type: TimeBlockType;
+  custom_type?: string | null;
   start_time: string; // HH:mm
   end_time: string; // HH:mm
   block_date: string; // YYYY-MM-DD

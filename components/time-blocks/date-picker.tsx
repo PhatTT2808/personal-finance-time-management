@@ -1,12 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function TimeBlockDatePicker({ date }: { date: string }) {
-  const router = useRouter();
-
+export function TimeBlockDatePicker({
+  date,
+  onChange,
+}: {
+  date: string;
+  onChange?: (date: string) => void;
+}) {
   return (
     <div className="flex items-center gap-2">
       <Label htmlFor="filter-date" className="text-sm text-muted-foreground">
@@ -16,7 +19,7 @@ export function TimeBlockDatePicker({ date }: { date: string }) {
         id="filter-date"
         type="date"
         value={date}
-        onChange={(e) => router.push(`/time-blocks?date=${e.target.value}`)}
+        onChange={(e) => onChange?.(e.target.value)}
         className="w-44"
       />
     </div>

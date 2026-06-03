@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { TODO_PRIORITIES, TODO_PRIORITY_LABELS } from "@/lib/constants";
@@ -30,10 +29,13 @@ import {
 type Props = {
   todo?: Todo;
   trigger: React.ReactElement;
+  onSaved?: (todo: Todo) => void;
 };
 
-export function TodoDialog({ todo, trigger }: Props) {
-  const router = useRouter();
+const TODO_COLUMNS =
+  "id, user_id, title, description, status, due_date, priority, created_at, updated_at";
+
+export function TodoDialog({ todo, trigger, onSaved }: Props) {
   const isEdit = Boolean(todo);
 
   const [open, setOpen] = useState(false);
@@ -63,16 +65,28 @@ export function TodoDialog({ todo, trigger }: Props) {
       priority,
     };
 
+    let savedTodo: Todo | null = null;
     let error;
     if (isEdit && todo) {
-      ({ error } = await supabase.from("todos").update(payload).eq("id", todo.id));
+      const result = await supabase
+        .from("todos")
+        .update(payload)
+        .eq("id", todo.id)
+        .select(TODO_COLUMNS)
+        .single();
+      error = result.error;
+      savedTodo = result.data as Todo | null;
     } else {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      ({ error } = await supabase
+      const result = await supabase
         .from("todos")
-        .insert({ ...payload, status: "pending", user_id: user?.id }));
+        .insert({ ...payload, status: "pending", user_id: user?.id })
+        .select(TODO_COLUMNS)
+        .single();
+      error = result.error;
+      savedTodo = result.data as Todo | null;
     }
 
     setLoading(false);
@@ -83,8 +97,10 @@ export function TodoDialog({ todo, trigger }: Props) {
     }
 
     toast.success(isEdit ? "Đã cập nhật công việc." : "Đã thêm công việc.");
+    if (savedTodo) {
+      onSaved?.(savedTodo);
+    }
     setOpen(false);
-    router.refresh();
   }
 
   return (

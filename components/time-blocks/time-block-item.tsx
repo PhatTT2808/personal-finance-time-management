@@ -9,11 +9,21 @@ import { Badge } from "@/components/ui/badge";
 import { TimeBlockDialog } from "@/components/time-blocks/time-block-dialog";
 import { ConfirmDelete } from "@/components/confirm-delete";
 
-export function TimeBlockItem({ block }: { block: TimeBlock }) {
+type Props = {
+  block: TimeBlock;
+  onSaved?: (block: TimeBlock) => void;
+  onDeleted?: (id: string) => void;
+};
+
+export function TimeBlockItem({ block, onSaved, onDeleted }: Props) {
   const hours = hoursBetween(
     formatTime(block.start_time),
     formatTime(block.end_time)
   );
+  const typeLabel =
+    block.type === "other" && block.custom_type?.trim()
+      ? block.custom_type.trim()
+      : TIME_BLOCK_TYPE_LABELS[block.type];
 
   return (
     <div className="flex items-start gap-3 rounded-lg border bg-card p-3">
@@ -21,7 +31,7 @@ export function TimeBlockItem({ block }: { block: TimeBlock }) {
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-medium">{block.title}</p>
           <Badge variant="secondary">
-            {TIME_BLOCK_TYPE_LABELS[block.type]}
+            {typeLabel}
           </Badge>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -36,6 +46,7 @@ export function TimeBlockItem({ block }: { block: TimeBlock }) {
       <div className="flex shrink-0 gap-1">
         <TimeBlockDialog
           timeBlock={block}
+          onSaved={onSaved}
           trigger={
             <Button variant="ghost" size="icon" aria-label="Sửa">
               <Pencil className="h-4 w-4" />
@@ -45,6 +56,7 @@ export function TimeBlockItem({ block }: { block: TimeBlock }) {
         <ConfirmDelete
           table="time_blocks"
           id={block.id}
+          onDeleted={() => onDeleted?.(block.id)}
           description="Bạn có chắc chắn muốn xóa khối thời gian này không?"
           trigger={
             <Button
