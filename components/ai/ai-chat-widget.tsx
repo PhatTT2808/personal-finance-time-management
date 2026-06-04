@@ -66,6 +66,7 @@ export function AIChatWidget() {
   const [input, setInput] = useState("")
   const [selectedMode, setSelectedMode] = useState<ChatModeId | null>(null)
   const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [loading, setLoading] = useState(false)
 
   const activeMode = CHAT_MODES.find((mode) => mode.id === selectedMode)
 
@@ -81,20 +82,16 @@ export function AIChatWidget() {
     ])
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     const trimmedInput = input.trim()
 
-    if (!trimmedInput) {
+    if (!trimmedInput || loading) {
       return
     }
 
     const timestamp = Date.now()
-    const response =
-      activeMode?.response ??
-      "Hãy chọn một chế độ để mình phản hồi đúng ngữ cảnh hơn nhé."
-
     setMessages((currentMessages) => [
       ...currentMessages,
       {
@@ -102,13 +99,66 @@ export function AIChatWidget() {
         role: "user",
         content: trimmedInput,
       },
-      {
-        id: timestamp + 1,
-        role: "assistant",
-        content: response,
-      },
     ])
     setInput("")
+
+    if (selectedMode !== "data") {
+      const response =
+        activeMode?.response ??
+        "Hãy chọn một chế độ để mình phản hồi đúng ngữ cảnh hơn nhé."
+
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        {
+          id: timestamp + 1,
+          role: "assistant",
+          content: response,
+        },
+      ])
+      return
+    }
+
+    const loadingMessageId = timestamp + 1
+    setLoading(true)
+    setMessages((currentMessages) => [
+      ...currentMessages,
+      {
+        id: loadingMessageId,
+        role: "assistant",
+        content: "Đang suy nghĩ...",
+      },
+    ])
+
+    try {
+      const response = await fetch("/api/ai/chat-data-query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: trimmedInput }),
+      })
+      const data = (await response.json()) as { ok?: boolean; reply?: string }
+      const reply =
+        data.reply ||
+        "Mình chưa nhận được phản hồi phù hợp. Bạn thử hỏi lại ngắn gọn hơn nhé."
+
+      setMessages((currentMessages) =>
+        currentMessages.map((message) =>
+          message.id === loadingMessageId ? { ...message, content: reply } : message
+        )
+      )
+    } catch {
+      setMessages((currentMessages) =>
+        currentMessages.map((message) =>
+          message.id === loadingMessageId
+            ? {
+                ...message,
+                content: "Mình chưa kết nối được với trợ lý AI. Bạn thử lại sau nhé.",
+              }
+            : message
+        )
+      )
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -185,13 +235,15 @@ export function AIChatWidget() {
                 onChange={(event) => setInput(event.target.value)}
                 placeholder={activeMode?.placeholder ?? DEFAULT_PLACEHOLDER}
                 aria-label="Nội dung tin nhắn"
+                disabled={loading}
                 className="border-white/10 bg-white/[0.04] text-slate-50 placeholder:text-slate-500 focus-visible:ring-sky-300/30"
               />
               <Button
                 type="submit"
+                disabled={loading}
                 className="bg-sky-300 text-slate-950 hover:bg-sky-200 focus-visible:ring-sky-300/30"
               >
-                Gửi
+                {loading ? "Đợi..." : "Gửi"}
               </Button>
             </form>
           </CardFooter>
