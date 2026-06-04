@@ -14,7 +14,7 @@ type KimiChatResponse = {
 const DEFAULT_AI_BASE_URL = "https://ckey.vn/v1/chat/completions";
 const AI_REQUEST_TIMEOUT_MS = 25_000;
 
-export async function createKimiJsonCompletion(messages: KimiMessage[]) {
+export async function createKimiJsonCompletion(messages: KimiMessage[], timeoutMs = AI_REQUEST_TIMEOUT_MS) {
   const baseUrl = process.env.AI_BASE_URL || DEFAULT_AI_BASE_URL;
   const apiKey = process.env.AI_API_KEY;
   const model = process.env.AI_MODEL;
@@ -28,7 +28,7 @@ export async function createKimiJsonCompletion(messages: KimiMessage[]) {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), AI_REQUEST_TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   const response = await fetch(baseUrl, {
     method: "POST",
