@@ -112,6 +112,11 @@ export function AIChatWidget() {
       return
     }
 
+    if (selectedMode === "suggestion") {
+      await handlePersonalRecommendationsSubmit(trimmedInput, assistantMessageId)
+      return
+    }
+
     if (selectedMode !== "data") {
       const response =
         activeMode?.response ??
@@ -182,6 +187,32 @@ export function AIChatWidget() {
       const reply =
         data.reply ||
         "Mình chưa nhận được phản hồi phù hợp. Bạn thử hỏi lại ngắn gọn hơn nhé."
+
+      replaceMessage(loadingMessageId, reply)
+    } catch {
+      replaceMessage(loadingMessageId, "Mình chưa kết nối được với trợ lý AI. Bạn thử lại sau nhé.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handlePersonalRecommendationsSubmit(message: string, loadingMessageId: number) {
+    setLoading(true)
+    setMessages((currentMessages) => [
+      ...currentMessages,
+      { id: loadingMessageId, role: "assistant", content: "Đang phân tích..." },
+    ])
+
+    try {
+      const response = await fetch("/api/ai/personal-recommendations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      })
+      const data = (await response.json()) as { ok?: boolean; reply?: string }
+      const reply =
+        data.reply ||
+        "Mình chưa có gợi ý phù hợp. Bạn thử hỏi cụ thể hơn về chi tiêu, todo hoặc lịch nhé."
 
       replaceMessage(loadingMessageId, reply)
     } catch {
